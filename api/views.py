@@ -30,20 +30,24 @@ def sign_up_user(request):
         return Response({'refresh': str(refresh),'access': str(refresh.access_token)},status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
+
 def update_profile(request):
-    serializer = UserSerializer(data=request.data, instance=request.user.user, context={'request': request})
+    serializer = UserSerializer(data=request.data, instance=request.user.user, context={'request': request}, partial=True)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
         return Response(serializer.data)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
+
 def get_profile(request):
     serializer = UserSerializer(instance=request.user.user, context={'request': request})
     return Response(serializer.data)
 
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def profile(request):
+    if request.method == 'POST':
+        return update_profile(request)
+    return get_profile(request)
 @api_view(['GET'])
 def app_init_data(request):
     serializer = LanguageSerializer(Language.objects.all(), many=True)

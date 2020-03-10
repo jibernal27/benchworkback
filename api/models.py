@@ -68,6 +68,7 @@ class Place(TimeStampedModel):
 class File(TimeStampedModel):
     user = models.ForeignKey('api.User',on_delete=models.CASCADE)
     file = models.FileField(upload_to='files/%Y/%m/%d/')
+    name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.file.name
